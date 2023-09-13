@@ -117,10 +117,13 @@ const MainForm: React.FC<MainFormProps> = () => {
               color="red"
               fontWeight="bold"
             >
-              {form.hasWorkersPaid ? "200k" : "100k"}
+              {form.hasWorkersPaid ? "200K" : "100K"}
             </SliderMark>
             <SliderMark value={500000} {...labelStyles}>
               500K
+            </SliderMark>
+            <SliderMark value={750000} {...labelStyles}>
+              750K
             </SliderMark>
             <SliderMark value={1000000} {...labelStyles}>
               1M
@@ -143,7 +146,9 @@ const MainForm: React.FC<MainFormProps> = () => {
 
         <Box mt={8} className="estimate">
           <Text>
-            This means, for {millify(form.loads)} loads, Zaraz will cost you:
+            {finalPrice > 0
+              ? `For ${millify(form.loads)} loads, Zaraz will cost you:`
+              : `Yay! For ${millify(form.loads)} loads, Zaraz is free for you!`}
           </Text>
           <Text fontSize="5xl" display="inline">
             ${finalPrice}/
