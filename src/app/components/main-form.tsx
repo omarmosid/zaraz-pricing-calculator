@@ -15,6 +15,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import millify from "millify";
 
 type MainFormProps = {};
 
@@ -41,6 +42,13 @@ const getPrice = (form: FormFields) => {
   return finalPrice;
 };
 
+const getCompetitorPrice = (form: FormFields) => {
+  const traffic = form.loads;
+  const egressCost = traffic * 0.0012;
+  const maintenanceCosts = traffic / 10000;
+  return roundToTwoDecimalPlaces(egressCost + maintenanceCosts);
+};
+
 const labelStyles = {
   mt: "2",
   ml: "-2.5",
@@ -56,16 +64,17 @@ const MainForm: React.FC<MainFormProps> = () => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const finalPrice = getPrice(form);
+  const compPrice = getCompetitorPrice(form);
 
   return (
     <>
       <Heading fontSize="4xl" my={12}>
         Find out how much you will have to pay for Zaraz after Sep 20th
       </Heading>
-      <VStack alignItems="flex-start" gap={12}>
+      <VStack alignItems="flex-start" gap={8}>
         <Box>
           <Text fontSize="xl" mb={4}>
-            Do you have Workers paid?
+            Do you have Workers Pro Plan?
           </Text>
           <ButtonGroup spacing={0}>
             <Button
@@ -85,9 +94,9 @@ const MainForm: React.FC<MainFormProps> = () => {
           </ButtonGroup>
         </Box>
 
-        <Box>
+        <Box w="60%">
           <Text fontSize="xl" mb={4}>
-            How many Zaraz page loads do you expect to see?
+            How much traffic do you roughly get on your website?
           </Text>
           <Slider
             aria-label="slider-ex-1"
@@ -125,7 +134,7 @@ const MainForm: React.FC<MainFormProps> = () => {
               color="white"
               placement="top"
               isOpen={showTooltip}
-              label={`${form.loads}`}
+              label={`${millify(form.loads)}`}
             >
               <SliderThumb boxSize={4} bgColor="blue" />
             </Tooltip>
@@ -133,11 +142,36 @@ const MainForm: React.FC<MainFormProps> = () => {
         </Box>
 
         <Box mt={8} className="estimate">
-          <Text>For {form.loads} loads, Zaraz will cost you:</Text>
-          <Text fontSize="6xl" display="inline">
+          <Text>
+            This means, for {millify(form.loads)} loads, Zaraz will cost you:
+          </Text>
+          <Text fontSize="5xl" display="inline">
             ${finalPrice}/
           </Text>
           <Text display="inline">per month</Text>
+        </Box>
+
+        <Box mt={4} className="estimate">
+          <Text>
+            For the same amount of traffic, A self hosted server side tag
+            managment tool might cost you:
+          </Text>
+          <Text fontSize="5xl" display="inline" color="red">
+            ${compPrice}/
+          </Text>
+          <Text display="inline">per month*</Text>
+          <Text fontSize="xs">
+            *this is a rough estimate that includes infrastructure and
+            maintenance costs
+          </Text>
+        </Box>
+
+        <Box mt={4} className="estimate">
+          <Text>By choosing to use Zaraz you stand to save</Text>
+          <Text fontSize="5xl" display="inline" color="green">
+            ${compPrice - finalPrice}/
+          </Text>
+          <Text display="inline">per month*</Text>
         </Box>
       </VStack>
     </>
